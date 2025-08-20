@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  rclone-proxy:
+    image: rclone/rclone:latest
+    networks:
+      - proxy-net
+    configs:
+      - source: rclone_conf_v1
+        target: /config/rclone/rclone.conf
+    secrets:
+      - s3_access_key_id_v1
+      - s3_secret_access_key_v1
+    environment:
+      # The _FILE suffix tells rclone to read the secret from the file
+      # located at /run/secrets/<secret_name>
+      - RCLONE_S3_ACCESS_KEY_ID_FILE=/run/secrets/s3_access_key_id_v1
+      - RCLONE_S3_SECRET_ACCESS_KEY_FILE=/run/secrets/s3_secret_access_key_v1
+    command: >
+      serve s3 webdav-remote:
+      --addr :8080
+      --s3-no-check-bucket
+      --stats 1m
+      --log-level INFO
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager # or worker, as needed
+
+networks:
+  proxy-net:
+    name: rclone-proxy-swarm-net
+    driver: overlay
+
+configs:
+  rclone_conf_v1:
+    external: true
+
+secrets:
+  s3_access_key_id_v1:
+    external: true
+  s3_secret_access_key_v1:
+    external: true

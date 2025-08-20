@@ -1,0 +1,52 @@
+# traefik.yml (Static Configuration)
+
+# Global settings
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+# Entrypoints
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
+
+# API and Dashboard (optional, but useful for debugging)
+# To enable, uncomment the port mapping in docker-compose.yml and the router below.
+api:
+  dashboard: true
+  insecure: true # For local access only. For production, secure it.
+
+# Providers
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: traefik-proxy-net
+  file:
+    directory: /config
+    watch: true
+
+# Certificate Resolvers (for Let's Encrypt)
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: ${LETSENCRYPT_EMAIL}
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: web
+
+# Logging
+log:
+  level: INFO # (DEBUG, INFO, WARN, ERROR, FATAL)
+accessLog: {}

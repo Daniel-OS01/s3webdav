@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  rclone-proxy:
+    image: rclone/rclone:latest
+    container_name: rclone-s3-proxy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./rclone.conf:/config/rclone/rclone.conf
+    environment:
+      - RCLONE_S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - RCLONE_S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+    command: >
+      serve s3 webdav-remote:
+      --addr :8080
+      --s3-no-check-bucket
+      --s3-no-head
+      --stats 1m
+      --log-level INFO
+    restart: unless-stopped
+    networks:
+      - default
+
+networks:
+  default:
+    name: rclone-proxy-net

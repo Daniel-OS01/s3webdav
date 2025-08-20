@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rclone-proxy
+  namespace: rclone-proxy
+  labels:
+    app: rclone-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rclone-proxy
+  template:
+    metadata:
+      labels:
+        app: rclone-proxy
+    spec:
+      containers:
+        - name: rclone-proxy
+          image: rclone/rclone:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - "rclone"
+            - "serve"
+            - "s3"
+            - "webdav-remote:"
+            - "--addr"
+            - ":8080"
+            - "--s3-no-check-bucket"
+            - "--stats"
+            - "1m"
+            - "--log-level"
+            - "INFO"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: RCLONE_S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: S3_ACCESS_KEY_ID
+            - name: RCLONE_S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: S3_SECRET_ACCESS_KEY
+          volumeMounts:
+            - name: rclone-config
+              mountPath: /config/rclone/rclone.conf
+              subPath: rclone.conf
+      volumes:
+        - name: rclone-config
+          configMap:
+            name: rclone-conf

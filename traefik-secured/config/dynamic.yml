@@ -1,0 +1,49 @@
+# dynamic.yml (Dynamic Configuration)
+#
+# This file defines middleware that can be applied to routers.
+# It is loaded by Traefik's file provider.
+
+http:
+  middlewares:
+    # Middleware for adding security headers
+    sec-headers:
+      headers:
+        # Enable HSTS
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        # Prevent clickjacking
+        frameDeny: true
+        # Prevent content type sniffing
+        contentTypeNosniff: true
+        # Enable XSS protection
+        browserXssFilter: true
+        # Content Security Policy (adjust as needed)
+        # This is a restrictive policy, you may need to loosen it.
+        contentSecurityPolicy: "default-src 'self'"
+
+    # Middleware for HTTP Basic Authentication
+    simple-auth:
+      basicAuth:
+        # This is a placeholder user/password: admin/password
+        # To generate a new one, you can use htpasswd:
+        #   sudo apt-get install apache2-utils
+        #   htpasswd -nb admin your-secure-password
+        # The output should be copied here.
+        users:
+          - "admin:$apr1$b2iizjvh$4iP54LMMv.p4e5i0s3sP1."
+
+    # --- Router for the Traefik Dashboard (Optional) ---
+    # To enable the dashboard on a secure subdomain, you can add this router.
+    # Make sure you have a DNS record for `traefik.your-domain.com`.
+    #
+    # routers:
+    #   dashboard:
+    #     rule: "Host(`traefik.${DOMAIN_NAME}`)"
+    #     service: "api@internal"
+    #     entrypoints:
+    #       - "websecure"
+    #     tls:
+    #       certResolver: "letsencrypt"
+    #     middlewares:
+    #       - "simple-auth" # Secure the dashboard with basic auth

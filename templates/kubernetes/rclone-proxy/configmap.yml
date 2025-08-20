@@ -1,0 +1,17 @@
+# This is an EXAMPLE file.
+# It is recommended to create the ConfigMap manually from your rclone.conf file:
+# kubectl create configmap rclone-conf --from-file=rclone.conf=/path/to/your/rclone.conf -n rclone-proxy
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rclone-conf
+  namespace: rclone-proxy
+data:
+  rclone.conf: |
+    [webdav-remote]
+    type = webdav
+    url = http://example.com/remote.php/dav/files/username/
+    vendor = other
+    user = your-webdav-username
+    pass = your-encrypted-password-from-rclone-config

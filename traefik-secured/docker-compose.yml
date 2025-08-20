@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080" # Uncomment to expose the Traefik dashboard (for debugging)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - ./config:/config:ro
+      - letsencrypt:/letsencrypt
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    networks:
+      - proxy-net
+
+  rclone-proxy:
+    image: rclone/rclone:latest
+    container_name: rclone-s3-proxy-secured
+    restart: unless-stopped
+    volumes:
+      # Note the relative path to the rclone configuration
+      - ../rclone-proxy/basic/rclone.conf:/config/rclone/rclone.conf:ro
+    env_file:
+      # Note the relative path to the .env file for rclone's S3 credentials
+      - ../rclone-proxy/basic/.env
+    command: >
+      serve s3 webdav-remote:
+      --addr :8080
+      --s3-no-check-bucket
+      --stats 1m
+      --log-level INFO
+    networks:
+      - proxy-net
+    labels:
+      - "traefik.enable=true"
+      # Router for the S3 service
+      - "traefik.http.routers.s3-secure.rule=Host(`s3.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.s3-secure.entrypoints=websecure"
+      - "traefik.http.routers.s3-secure.tls.certresolver=letsencrypt"
+      # Service definition
+      - "traefik.http.services.s3-service.loadbalancer.server.port=8080"
+      # Middleware
+      - "traefik.http.routers.s3-secure.middlewares=sec-headers@file,simple-auth@file"
+
+volumes:
+  letsencrypt:
+    name: traefik_letsencrypt
+
+networks:
+  proxy-net:
+    name: traefik-proxy-net

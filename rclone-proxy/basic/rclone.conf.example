@@ -1,0 +1,31 @@
+# This is an example rclone.conf file.
+#
+# It is recommended to create this file using `rclone config`.
+# Run `rclone config` on your local machine and then copy the generated
+# file to this directory and rename it to `rclone.conf`.
+#
+# The `pass` field will be automatically encrypted by `rclone config`.
+# Do not store plain-text passwords in this file.
+
+[webdav-remote]
+type = webdav
+url = http://example.com/remote.php/dav/files/username/
+vendor = other
+user = your-webdav-username
+pass = your-encrypted-password-from-rclone-config
+
+# Example for Nextcloud
+# [nextcloud-remote]
+# type = webdav
+# url = https://your-nextcloud-instance.com/remote.php/dav/files/username/
+# vendor = nextcloud
+# user = your-nextcloud-username
+# pass = your-encrypted-password
+
+# Example for Koofr
+# [koofr-remote]
+# type = webdav
+# url = https://app.koofr.net/dav/Koofr
+# vendor = other
+# user = your-koofr-email
+# pass = your-encrypted-password-from-koofr-app-passwords
