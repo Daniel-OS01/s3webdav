@@ -1,0 +1,53 @@
+version: '3.8'
+
+volumes:
+  webdav_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/webdav-mount
+
+services:
+  rclone-mount:
+    image: rclone/rclone:latest
+    container_name: rclone-webdav-mount
+    restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/fuse
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ./rclone.conf:/config/rclone/rclone.conf:ro
+      - webdav_data:/mnt/webdav:shared
+    command: >
+      mount webdav-remote: /mnt/webdav
+      --allow-other
+      --vfs-cache-mode writes
+      --log-level INFO
+    networks:
+      - minio-net
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio-server
+    restart: unless-stopped
+    depends_on:
+      - rclone-mount
+    volumes:
+      - webdav_data:/data
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # MinIO Console
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    networks:
+      - minio-net
+
+networks:
+  minio-net:
+    name: minio-gateway-net

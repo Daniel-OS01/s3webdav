@@ -1,0 +1,18 @@
+# .yamllint.yml
+# Configuration for the YAML linter.
+
+# Rules to extend from the default configuration.
+extends: default
+
+# Rules to disable or customize.
+rules:
+  # Set the max line length to 120 characters.
+  line-length:
+    max: 120
+  # Set the indentation to 2 spaces.
+  indentation:
+    spaces: 2
+  # Disable the rule that requires a `---` at the start of every document.
+  document-start: disable
+  # Allow for a new line at the end of the file.
+  new-line-at-end-of-file: enable

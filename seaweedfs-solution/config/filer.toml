@@ -1,0 +1,41 @@
+# SeaweedFS Filer Configuration (`filer.toml`)
+
+# This file configures the SeaweedFS filer service.
+# For this solution, we are using the default LevelDB backend,
+# but we are telling it to store its database in the /data directory,
+# which is the mount point for our WebDAV share.
+
+[default]
+# The location where the filer will store its metadata database.
+# In our docker-compose.yml, this path points to the rclone mount.
+location = "/data"
+
+# The following are examples of other backends.
+# Do not uncomment them unless you are changing the storage backend.
+
+# [leveldb2]
+# enabled = false
+# location = "/data"
+
+# [mysql]
+# enabled = false
+# username = "user"
+# password = "password"
+# host = "localhost"
+# port = 3306
+# database = "seaweedfs"
+# connection_max_idle = 100
+# connection_max_open = 100
+# connection_max_lifetime_seconds = 60
+
+# [postgres]
+# enabled = false
+# username = "user"
+# password = "password"
+# host = "localhost"
+# port = 5432
+# database = "seaweedfs"
+# sslmode = "disable"
+# connection_max_idle = 100
+# connection_max_open = 100
+# connection_max_lifetime_seconds = 60

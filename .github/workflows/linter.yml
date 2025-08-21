@@ -1,0 +1,23 @@
+# This workflow lints all YAML files in the repository.
+
+name: YAML Linter
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-yaml:
+    name: Lint YAML files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Run YAML linter
+        uses: ibijonov/action-yamllint@v3
+        with:
+          config_file: .yamllint.yml
+          strict: true
