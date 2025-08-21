@@ -1,0 +1,21 @@
+# ---------------------------------------------------------------------------
+#                      --- LiteLLM Configuration ---
+#
+# This file defines the model endpoints that LiteLLM will proxy.
+# It is configured to read sensitive values (like API keys) from
+# environment variables for security. The variables are loaded from the
+# .env file by Docker Compose.
+# ---------------------------------------------------------------------------
+
+model_list:
+  - model_name: azure_model # A user-friendly name for the model
+    litellm_params:
+      model: azure/your-deployment-name # Specify your Azure deployment name here
+      api_key: os.environ/AZURE_API_KEY # Reads the AZURE_API_KEY from the environment
+      api_base: os.environ/AZURE_API_BASE # Reads the AZURE_API_BASE from the environment
+      api_version: "2023-07-01-preview" # Optional: specify an API version if needed
+
+# Optional: General settings for the LiteLLM proxy
+litellm_settings:
+  drop_params: True # Drops unsupported parameters from requests
+  set_verbose: False # Set to True for detailed logging from LiteLLM

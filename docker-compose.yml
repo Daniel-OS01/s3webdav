@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  homarr:
+    image: ghcr.io/homarr-labs/homarr:latest
+    container_name: homarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY}
+    ports:
+      - "${HOMARR_PORT:-7575}:7575"
+    volumes:
+      - ./data/homarr/configs:/app/data/configs
+      - ./data/homarr/icons:/app/public/icons
+      - ./data/homarr/data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homarr.rule=Host(`homarr.your-domain.com`)" # Replace with your domain
+      - "traefik.http.routers.homarr.service=homarr"
+      - "traefik.http.services.homarr.loadbalancer.server.port=7575"
+    depends_on:
+      duplicati:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7575"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  duplicati:
+    image: lscr.io/linuxserver/duplicati:latest
+    container_name: duplicati
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - SETTINGS_ENCRYPTION_KEY=${SETTINGS_ENCRYPTION_KEY}
+      - DUPLICATI__WEBSERVICE_PASSWORD=${DUPLICATI__WEBSERVICE_PASSWORD}
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./data/duplicati/config:/config
+      - ./data/duplicati/backups:/backups
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.duplicati.rule=Host(`duplicati.your-domain.com`)" # Replace with your domain
+      - "traefik.http.routers.duplicati.service=duplicati"
+      - "traefik.http.services.duplicati.loadbalancer.server.port=8200"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8200/ngax/index.html"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    restart: unless-stopped
+    env_file: .env # Pass all variables from .env file
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./configs/litellm_config.yaml:/app/config.yaml
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.litellm.rule=Host(`litellm.your-domain.com`)" # Replace with your domain
+      - "traefik.http.routers.litellm.service=litellm"
+      - "traefik.http.services.litellm.loadbalancer.server.port=4000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
