@@ -1,0 +1,12 @@
+# LiteLLM Configuration File
+# For more details, see: https://docs.litellm.ai/docs/proxy/config
+
+model_list:
+  - model_name: gpt-3.5-turbo
+    litellm_params:
+      model: openai/gpt-3.5-turbo
+      api_key: ${OPENAI_API_KEY} # Reads from environment variable
+
+litellm_settings:
+  # set to 'DEBUG' to see detailed logs
+  log_level: "INFO"

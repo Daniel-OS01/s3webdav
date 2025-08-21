@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  litellm-proxy:
+    image: ghcr.io/berriai/litellm:main-latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.litellm-proxy.rule=Host(``)"
+      - "traefik.http.services.litellm-proxy.loadbalancer.server.port=8000"
+    volumes:
+      - ./config:/app/config.yaml
+    env_file: .env
+    restart: unless-stopped
+    command: ["--config", "/app/config.yaml", "--detailed_debug"]
+
+  litellm-ui:
+    image: ghcr.io/litellm/ui:stable
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.litellm-ui.rule=Host(``)"
+      - "traefik.http.services.litellm-ui.loadbalancer.server.port=4000"
+    depends_on:
+      - litellm-proxy
+    environment:
+      - LITELLM_PROXY_URL=http://litellm-proxy:8000
+    restart: unless-stopped

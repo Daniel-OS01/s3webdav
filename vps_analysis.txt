@@ -1,0 +1,124 @@
+VPS Analysis Report - Thu Aug 21 17:07:58 UTC 2025
+========================================
+----------------------------------------
+ Operating System
+----------------------------------------
+---
+Command: cat /etc/os-release
+PRETTY_NAME="Ubuntu 24.04.2 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.2 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+
+----------------------------------------
+ CPU Information
+----------------------------------------
+---
+Command: lscpu
+Architecture:                       x86_64
+CPU op-mode(s):                     32-bit, 64-bit
+Address sizes:                      46 bits physical, 48 bits virtual
+Byte Order:                         Little Endian
+CPU(s):                             4
+On-line CPU(s) list:                0-3
+Vendor ID:                          GenuineIntel
+Model name:                         Intel(R) Xeon(R) Processor @ 2.30GHz
+CPU family:                         6
+Model:                              63
+Thread(s) per core:                 1
+Core(s) per socket:                 4
+Socket(s):                          1
+Stepping:                           0
+BogoMIPS:                           4599.99
+Flags:                              fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3 fma cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm cpuid_fault pti ssbd ibrs ibpb stibp fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt arat umip md_clear arch_capabilities
+Hypervisor vendor:                  KVM
+Virtualization type:                full
+L1d cache:                          128 KiB (4 instances)
+L1i cache:                          128 KiB (4 instances)
+L2 cache:                           1 MiB (4 instances)
+L3 cache:                           45 MiB (1 instance)
+NUMA node(s):                       1
+NUMA node0 CPU(s):                  0-3
+Vulnerability Gather data sampling: Not affected
+Vulnerability Itlb multihit:        Not affected
+Vulnerability L1tf:                 Mitigation; PTE Inversion
+Vulnerability Mds:                  Mitigation; Clear CPU buffers; SMT Host state unknown
+Vulnerability Meltdown:             Mitigation; PTI
+Vulnerability Mmio stale data:      Vulnerable: Clear CPU buffers attempted, no microcode; SMT Host state unknown
+Vulnerability Retbleed:             Mitigation; IBRS
+Vulnerability Spec rstack overflow: Not affected
+Vulnerability Spec store bypass:    Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:           Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:           Mitigation; IBRS, IBPB conditional, STIBP disabled, RSB filling, PBRSB-eIBRS Not affected
+Vulnerability Srbds:                Not affected
+Vulnerability Tsx async abort:      Not affected
+
+----------------------------------------
+ Memory Usage
+----------------------------------------
+---
+Command: free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.8Gi       374Mi       7.1Gi       560Ki       573Mi       7.4Gi
+Swap:             0B          0B          0B
+
+----------------------------------------
+ Disk Space
+----------------------------------------
+---
+Command: df -h
+Filesystem               Size  Used Avail Use% Mounted on
+/dev/vdb                  20G   95M   19G   1% /rom/overlay
+overlayfs:/overlay/root   20G   95M   19G   1% /
+tmpfs                    3.9G     0  3.9G   0% /dev/shm
+tmpfs                    1.6G  324K  1.6G   1% /run
+tmpfs                    5.0M     0  5.0M   0% /run/lock
+tmpfs                    1.0M  4.0K 1020K   1% /run/credentials/@system
+tmpfs                    3.9G  224K  3.9G   1% /var/lib/systemd
+tmpfs                    796M  8.0K  796M   1% /run/user/1001
+
+----------------------------------------
+ Docker & Docker Compose
+----------------------------------------
+---
+Command: docker --version
+Docker version 28.3.3, build 980b856
+
+---
+Command: docker compose version
+Docker Compose version v2.39.1
+
+----------------------------------------
+ Network Interfaces
+----------------------------------------
+---
+Command: ip -br a
+lo               UNKNOWN        127.0.0.1/8
+eth0             UP             192.168.0.2/24
+docker0          DOWN           172.17.0.1/16
+
+----------------------------------------
+ Open Ports (Listening)
+----------------------------------------
+---
+Command: ss -tuln
+Netid State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+udp   UNCONN 0      0         127.0.0.54:53        0.0.0.0:*
+udp   UNCONN 0      0         127.0.0.53:53        0.0.0.0:*
+tcp   LISTEN 0      0            0.0.0.0:22        0.0.0.0:*
+tcp   LISTEN 0      0         127.0.0.53:53        0.0.0.0:*
+tcp   LISTEN 0      0         127.0.0.54:53        0.0.0.0:*
+
+----------------------------------------
+ Firewall Status
+----------------------------------------
+WARNING: 'ufw' command not found. Cannot check firewall status.
