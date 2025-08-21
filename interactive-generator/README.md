@@ -1,16 +1,24 @@
 # Interactive Configuration Generator
 
-This directory contains an interactive CLI tool to help you generate a customized configuration for the `rclone-proxy` solution.
+This directory contains an interactive CLI tool to help you generate a customized configuration for various deployment scenarios.
 
-The script guides you through a series of questions and, based on your answers, creates a ready-to-use set of files, including `docker-compose.yml`, `.env`, and `rclone.conf`.
+The script uses a workflow-based approach to tailor the generated files to your specific needs, from simple personal projects to more complex production deployments.
+
+## Workflows
+
+Currently, the following workflow is available:
+
+-   **Quick Start (Beginner-Friendly)**: A simple, step-by-step guide to get a basic `rclone-proxy` service running with minimal configuration.
+
+More workflows for advanced and production use cases will be added in the future.
 
 ## Features
 
+-   **Workflow-Based**: Choose a workflow that matches your use case.
 -   **Interactive Wizard**: A step-by-step command-line interface that asks for the information it needs.
 -   **Guided Setup**: Provides context, examples, and guidance for each configuration step.
 -   **Input Validation**: Performs basic checks on your input to prevent common errors.
--   **Security Warnings**: Includes explicit warnings about password strength and storing credentials in plain text.
--   **Dynamic File Generation**: Automatically creates all the necessary files for the `rclone-proxy` solution.
+-   **Dynamic File Generation**: Automatically creates a complete package of files based on your choices.
 
 ## Prerequisites
 
@@ -30,21 +38,19 @@ The script guides you through a series of questions and, based on your answers, 
     ./generate_config.sh
     ```
 
-3.  **Answer the questions**:
-    The script will prompt you for information about your S3 gateway credentials and your WebDAV backend.
+3.  **Choose a workflow**:
+    Select the "Quick Start" workflow from the menu.
 
-4.  **Deploy the generated configuration**:
-    After the script finishes, it will create a new directory (default: `rclone-proxy-generated`). Navigate into that directory and start the service.
-    ```sh
-    cd rclone-proxy-generated
-    docker-compose up -d
-    ```
-    Your `rclone-proxy` service should now be running!
+4.  **Answer the questions**:
+    The script will prompt you for information about your platform, security preferences, and backend credentials.
 
-## What it Generates
+5.  **Deploy the generated configuration**:
+    After the script finishes, it will create a new directory (default: `rclone-proxy-generated`). This directory contains everything you need to get started. Follow the instructions in the generated `QUICKSTART.md` file.
 
--   `docker-compose.yml`: A Docker Compose file to run the `rclone-proxy` service.
+## What the "Quick Start" Workflow Generates
+
+-   `docker-compose.yml`: A Docker Compose file to run the `rclone-proxy` service, customized with your resource settings.
 -   `.env`: An environment file containing your S3 gateway credentials.
 -   `rclone.conf`: The rclone configuration file for connecting to your WebDAV backend.
-
-**Note on Security**: The generated `rclone.conf` file contains your WebDAV password in plain text. For production deployments, it is strongly recommended that you generate this file using `rclone config` to ensure your password is encrypted. The script will remind you of this when it finishes.
+-   `QUICKSTART.md`: A simple guide with copy-paste commands to get your service running.
+-   `SECURITY_CHECKLIST.md`: A basic checklist of security best practices to review after deployment.
