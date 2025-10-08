@@ -46,7 +46,7 @@ ask_question() {
         if [ "$is_required" = "true" ] && [ -z "$answer" ]; then
             color_red "This field is required. Please provide a value."
         else
-            declare "$var_name=$answer"
+            printf -v "$var_name" '%s' "$answer"
             break
         fi
     done
@@ -58,13 +58,14 @@ ask_secret() {
     local question=$1
     local var_name=$2
     local is_required=$3
+    local prompt="$question"
     while true; do
         read -r -sp "$prompt: " answer
         echo
         if [ "$is_required" = "true" ] && [ -z "$answer" ]; then
             color_red "This field is required. Please provide a value."
         else
-            declare "$var_name=$answer"
+            printf -v "$var_name" '%s' "$answer"
             break
         fi
     done
