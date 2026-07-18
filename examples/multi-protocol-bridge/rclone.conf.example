@@ -1,0 +1,68 @@
+# This is an example rclone.conf file for the Multi-Protocol Bridge.
+#
+# It is recommended to create this file using `rclone config`.
+# Run `rclone config` on your local machine and then copy the generated
+# file to this directory and rename it to `rclone.conf`.
+#
+# SECURITY: The `pass` field must be obscured. `rclone config` obscures it
+# for you automatically. If you must edit by hand, run `rclone obscure <password>`
+# and paste the output. Do NOT store plain-text passwords in this file.
+#
+# NOTE: Obscuring is reversible and does NOT encrypt this file. When you need
+# encryption at rest for the whole config, set a config password (via
+# `rclone config` -> "Set configuration password"), which encrypts the file.
+
+# =================================================================
+# Upstream remotes — one per backend server / protocol.
+# Each of these is surfaced as its own S3 bucket by the [combined]
+# remote below. Add or remove backends by editing these sections
+# and the `upstreams` line in [combined].
+# =================================================================
+
+# --- WebDAV backend ---------------------------------------------
+[webdav-remote]
+type = webdav
+url = https://your-webdav-server.com/remote.php/dav/files/username/
+vendor = other
+user = your-webdav-username
+pass = your-obscured-password-from-rclone-config
+
+# --- FTP backend ------------------------------------------------
+[ftp-remote]
+type = ftp
+host = ftp.your-server.com
+user = your-ftp-username
+pass = your-obscured-password-from-rclone-config
+# port = 21
+# tls = true
+
+# --- SFTP backend (one "other" protocol) ------------------------
+[sftp-remote]
+type = sftp
+host = sftp.your-server.com
+user = your-sftp-username
+pass = your-obscured-password-from-rclone-config
+# To authenticate with a private key instead of a password, uncomment the
+# line below and mount the key read-only into the container by adding
+# `- ./id_rsa:/config/rclone/id_rsa:ro` to the volumes in docker-compose.yml.
+# Keep the key out of version control (see .gitignore).
+# key_file = /config/rclone/id_rsa
+
+# --- S3 backend (another "other" protocol; optional) ------------
+# [s3-remote]
+# type = s3
+# provider = AWS
+# access_key_id = your-access-key-id
+# secret_access_key = your-secret-access-key
+# region = us-east-1
+
+# =================================================================
+# The combine remote merges every upstream into a single namespace.
+# Each `bucket-name=remote:` pair becomes a top-level S3 bucket, so
+# clients see one endpoint with a bucket per backend server.
+# To add a backend: define its remote above, then append
+# `<bucket-name>=<remote>:` to the `upstreams` line below.
+# =================================================================
+[combined]
+type = combine
+upstreams = webdav-server=webdav-remote: ftp-server=ftp-remote: sftp-server=sftp-remote:

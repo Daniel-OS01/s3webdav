@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  multi-protocol-bridge:
+    image: rclone/rclone:latest
+    container_name: rclone-multi-protocol-bridge
+    ports:
+      # Bind to localhost only. The endpoint is HTTP and, for non-local
+      # exposure, must be fronted by TLS (e.g. --cert/--key or a reverse
+      # proxy). Change to "8080:8080" only behind such protection.
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./rclone.conf:/config/rclone/rclone.conf:ro
+      # To mount an SFTP private key, uncomment and keep the key out of git:
+      # - ./id_rsa:/config/rclone/id_rsa:ro
+    env_file: .env
+    restart: unless-stopped
+    # Incoming requests are authenticated via RCLONE_AUTH_KEY (from .env),
+    # which rclone reads as --auth-key. Without it the endpoint is anonymous.
+    # For a read-only bridge, add `--read-only` to the command below.
+    command: >
+      serve s3 combined:
+      --addr :8080
+      --s3-no-check-bucket
+      --s3-no-head
+      --stats 1m
+      --log-level INFO

@@ -1,0 +1,7 @@
+# Secrets and generated config — never commit these.
+.env
+rclone.conf
+
+# SFTP private keys mounted into the container.
+id_rsa
+*.pem

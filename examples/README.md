@@ -11,5 +11,6 @@ The examples provided here are intended to help you understand how to use these 
 -   **Mobile App Backend**: How to use a solution as a storage backend for a mobile application.
 -   **Enterprise Deployment Patterns**: Examples of how to deploy these solutions in a large-scale, enterprise environment.
 -   **Backup and Archival**: How to use a solution for backing up and archiving data.
+-   **Multi-Protocol Bridge**: How to expose FTP, WebDAV, and other backend servers through a single S3 connection using rclone's combine backend.
 
 This directory will be populated with examples as the solutions are developed.
